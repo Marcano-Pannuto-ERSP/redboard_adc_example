@@ -10,6 +10,7 @@
 
 #include <uart.h>
 #include <adc.h>
+#include <math.h>
 
 #define CHECK_ERRORS(x)               \
 	if ((x) != AM_HAL_STATUS_SUCCESS) \
@@ -27,6 +28,15 @@ static void error_handler(uint32_t error)
 		am_devices_led_off(am_bsp_psLEDs, 0);
 		am_util_delay_ms(500);
 	}
+}
+
+double  temp_convert(double voltage) 
+{
+	double Vtemp = voltage * 1000;
+	double T = ((5.506-sqrt((pow(-5.506 ,2)) + 4 * 0.00176*(870.6-Vtemp))/(2 * (-0.00176)))+30);
+
+
+	return T;
 }
 
 static struct uart uart;
@@ -142,12 +152,17 @@ int main(void)
 			// reference, which then gives us the actual voltage measured.
 			const double reference = 1.5;
 			double voltage = data * reference / ((1 << 14) - 1);
-
+			double temperature = temp_convert(voltage);
 			am_util_stdio_printf(
-				"voltage = <%.3f> (0x%04X) ", voltage, data);
+				"temperature = <%.3f> (0x%04X) ", temperature, data);
+			am_util_stdio_printf("\r\n");
 
+			am_util_stdio_printf("temp_uncut = <%.3f> ", voltage);
+			am_util_stdio_printf("\r\n");
+			am_util_stdio_printf("raw = <%i> ", data);
 			am_util_stdio_printf("\r\n");
 		}
+		
 
 		// Sleep here until the next ADC interrupt comes along.
 		am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);

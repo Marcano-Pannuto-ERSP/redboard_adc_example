@@ -16,7 +16,7 @@ c_args = [
 link_args = [
   '--specs=nosys.specs', '--specs=nano.specs', '-mthumb',
   '-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mfloat-abi=hard', '-nostartfiles',
-  '-static', '-Wl,--gc-sections', '-fno-exceptions'
+  '-static', '-Wl,--gc-sections', '-fno-exceptions', '-lm'
 ]
 
 sources = files([
