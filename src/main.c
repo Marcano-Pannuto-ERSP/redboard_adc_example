@@ -33,7 +33,10 @@ static void error_handler(uint32_t error)
 double  temp_convert(double voltage) 
 {
 	double Vtemp = voltage * 1000;
-	double T = ((5.506-sqrt((pow(-5.506 ,2)) + 4 * 0.00176*(870.6-Vtemp))/(2 * (-0.00176)))+30);
+	
+	double top = 5.506 - (sqrt((5.506 * 5.506) + 4 * 0.00176 * (870.6-Vtemp)));
+	double bottom = 2 * -0.00176;
+	double T = top / bottom + 30;
 
 
 	return T;
@@ -155,11 +158,6 @@ int main(void)
 			double temperature = temp_convert(voltage);
 			am_util_stdio_printf(
 				"temperature = <%.3f> (0x%04X) ", temperature, data);
-			am_util_stdio_printf("\r\n");
-
-			am_util_stdio_printf("temp_uncut = <%.3f> ", voltage);
-			am_util_stdio_printf("\r\n");
-			am_util_stdio_printf("raw = <%i> ", data);
 			am_util_stdio_printf("\r\n");
 		}
 		
